@@ -70,3 +70,30 @@ test('already compliant request still disables post-processing and conversion is
     assert.equal(processRequest(req, settings, dependencies).status, 'applied'); assert.equal(req.custom_prompt_post_processing, '');
     const before = structuredClone(req); processRequest(req, settings, dependencies); assert.deepEqual(req, before);
 });
+
+test('writable nonconfigurable data properties retain their descriptors', () => {
+    const req = request(), settings = settingsFor(req);
+    Object.defineProperty(req, 'messages', { enumerable: false, configurable: false });
+    Object.defineProperty(req, 'custom_prompt_post_processing', { enumerable: false, configurable: false });
+    assert.equal(processRequest(req, settings, dependencies).status, 'applied');
+    assert.equal(req.custom_prompt_post_processing, '');
+    assert.equal(Object.getOwnPropertyDescriptor(req, 'messages').enumerable, false);
+});
+
+test('accessor target cannot cause a partial commit or run its setter', () => {
+    const req = request(), settings = settingsFor(req), messages = req.messages;
+    let called = false;
+    Object.defineProperty(req, 'custom_prompt_post_processing', { get: () => 'merge', set: () => called = true });
+    assert.equal(processRequest(req, settings, dependencies).status, 'skipped');
+    assert.equal(req.messages, messages); assert.equal(called, false);
+});
+
+test('YAML alias merge, block scalar content and malformed input follow the host parser semantics', () => {
+    const req = request(), settings = settingsFor(req);
+    req.custom_include_body = '- &base {model: other}\n- *base';
+    assert.equal(processRequest(req, settings, dependencies).status, 'skipped');
+    req.custom_include_body = 'note: |\n  messages: text only\n  model: text only';
+    assert.equal(processRequest(req, settings, dependencies).status, 'applied');
+    req.custom_include_body = 'temperature: 1\n---\nmodel: other';
+    assert.equal(processRequest(req, settings, dependencies).code, 'custom_parse');
+});

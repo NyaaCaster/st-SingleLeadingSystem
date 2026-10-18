@@ -8,7 +8,7 @@ SillyTavern 扩展：针对不允许对话中途出现系统消息的聊天模�
 >
 > **本插件不会接管其他插件的提示词注入，如果与其他插件、JS 脚本冲突，请不要使用本插件。**
 
-已提供可安装的扩展入口，代码验证与模拟宿主验证持续进行；实际酒馆和模型联调由用户执行。
+V1 已提供可安装的扩展入口，并完成代码验证与模拟宿主验证；实际酒馆和模型联调由用户执行。
 
 ## 安装与启用
 
@@ -22,9 +22,8 @@ SillyTavern 扩展：针对不允许对话中途出现系统消息的聊天模�
 更新提醒只检查当前安装分支，不自动安装。打开设置时最多每 24 小时检查一次，也可手动检查；发现更新后在酒馆扩展管理中更新并刷新页面。ZIP 安装可能无法检查更新。
 
 ## 已验证可用的模型
-> Ollama 本地部署
-
-[ttempvnn/HauhauCS-Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q4-K-M](https://ollama.com/ttempvnn/HauhauCS-Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q4-K-M)
+Ollama 本地部署
+- [ttempvnn/HauhauCS-Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q4-K-M](https://ollama.com/ttempvnn/HauhauCS-Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q4-K-M)
 
 
 ## 确定的行为
@@ -42,6 +41,16 @@ SillyTavern 扩展：针对不允许对话中途出现系统消息的聊天模�
 
 源码审计基线为 SillyTavern 1.19.0（`06bde939fb1e9c4c8d8641d810f0a916b5bce127`），不代表所有旧版或第三方分支都兼容。插件会检查所需事件和宿主能力，缺失时停用并提示。其他扩展在本插件之后修改请求，仍可能改变结果。
 
-Node.js 20 或更新版本，运行 `npm ci` 后执行 `npm test`。YAML 仅作为开发测试依赖；实际插件复用酒馆自带的库。运行时使用原生 ES modules，不需要构建或安装 npm 依赖。设计和内部交接文档保存在本地 `.docs/`，不进入 Git。
+Node.js 20 或更新版本，运行 `npm ci` 后执行 `npm run check`。另可运行 `npm run test:browser`，使用本机 Chrome/Chromium（自定义位置通过 `CHROME_PATH` 指定）加载模拟酒馆宿主，验证实际扩展文件的交互。该测试只监听临时回环端口，不启动真实酒馆、不连接模型，结束后关闭浏览器和服务。
+
+所有 npm 包均为开发验证依赖；实际插件复用酒馆自带的库。运行时使用原生 ES modules，不需要构建或安装 npm 依赖。设计和内部交接文档保存在本地 `.docs/`，不进入 Git。
+
+## 实机验收建议
+
+先在独立聊天中，使用选中的连接与模型验证普通回复、带深度世界书的回复、角色卡示例对白、继续生成及工具续轮。确认「最近一次处理」显示本次状态，已有工具调用结果与附件保留。
+
+再验证总开关关闭、规则停用、切换模型后不介入。遇到「本次未合并」，先检查提示中的冲突字段或消息类型：自定义请求体覆盖/删除 `messages` 或 `model`、非文本或带特殊元数据的系统消息、`developer` 角色及损坏的工具配对都会跳过转换。插件不会阻止酒馆继续发送原请求。
+
+后台 `quiet` 请求（含部分摘要与连接测试）、代替用户发言，以及其他扩展绕过发送事件的独立请求不在首版范围。提示词预算与酒馆预览位于转换之前，不保证显示的是转换后的请求。安装新版本后请刷新页面。
 
 MIT License。
