@@ -9,5 +9,10 @@
     "test": "node --test",
     "check": "node --check index.js && node --test"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "yaml": "2.8.3"
+  }
 }

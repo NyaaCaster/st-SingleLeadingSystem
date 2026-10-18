@@ -1,0 +1,43 @@
+<div id="sls-settings" class="sls-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header" role="button" tabindex="0" aria-expanded="false">
+            <b>系统消息合并</b><span class="sls-badge" data-sls="update-badge" hidden>有更新</span>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down" aria-hidden="true"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <p class="sls-help">用于要求系统消息位于对话开头的聊天模板。设计参考已核验的 <b>Qwen3.6-35B-A3B / Qwen3.5-35B-A3B</b> 官方模板约束；本酒馆扩展的实际效果以你的测试为准。</p>
+            <aside class="sls-warning" aria-labelledby="sls-warning-title">
+                <b id="sls-warning-title"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 使用前请注意</b>
+                <p>本插件会在对话中禁用 API 设置中的「提示词后处理」功能，如果与其他预设冲突，<strong>请不要使用本插件</strong>。</p>
+                <p>本插件不会接管其他插件的提示词注入，如果与其他插件、JS 脚本冲突，<strong>请不要使用本插件</strong>。</p>
+                <p class="sls-scope">仅对命中规则且成功转换的本次对话请求关闭后处理，不修改已保存的 API 设置。中途系统指令转为用户消息后，角色优先级会降低。</p>
+            </aside>
+            <p data-sls="unavailable" class="sls-warning" role="status" hidden></p>
+            <div class="sls-row sls-between">
+                <label class="checkbox_label" for="sls-enabled"><input type="checkbox" id="sls-enabled"><span>启用系统消息合并</span></label>
+                <span class="sls-status" data-sls="enabled-status">已停用</span>
+            </div>
+            <p class="sls-help">只处理已添加且启用的连接与模型。关闭总开关会保留规则。</p>
+            <section class="sls-section">
+                <b>当前连接与模型</b>
+                <dl><dt>接口</dt><dd data-sls="source">—</dd><dt>地址</dt><dd><code data-sls="origin">—</code></dd><dt>模型</dt><dd><code data-sls="model">—</code></dd></dl>
+                <div class="sls-row"><button type="button" class="menu_button" data-sls="add">添加当前连接与模型</button><span class="sls-status" data-sls="match">尚未添加</span></div>
+                <p class="sls-help" data-sls="connection-help">先在酒馆连接面板选择接口和模型，再添加规则。完整地址只保存匹配指纹。</p>
+            </section>
+            <section class="sls-section">
+                <div class="sls-row sls-between"><b>已添加规则</b><small data-sls="count">0 条</small></div>
+                <div class="sls-empty" data-sls="empty">尚未添加规则。请点击上方按钮，为当前连接与模型建立规则。</div>
+                <div data-sls="rules"></div>
+            </section>
+            <section class="sls-section">
+                <b>最近一次处理</b><div class="sls-result" data-sls="result" role="status">尚无处理记录。</div>
+                <p class="sls-help">规则匹配不代表请求已转换或服务可用。处理记录不保存正文，只在当前页面显示。</p>
+            </section>
+            <section class="sls-section">
+                <div class="sls-row sls-between"><b>扩展更新 <span class="sls-version" data-sls="version">版本读取中</span></b><button type="button" class="menu_button" data-sls="check">检查更新</button></div>
+                <p data-sls="update-status" role="status">尚未检查</p>
+                <p class="sls-help">打开设置时自动检查，最多每 24 小时一次。发现更新后，请到酒馆扩展管理中更新。</p>
+            </section>
+        </div>
+    </div>
+</div>
