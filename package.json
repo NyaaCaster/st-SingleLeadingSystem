@@ -1,0 +1,13 @@
+{
+  "name": "st-single-leading-system",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Position-preserving system message compatibility for SillyTavern",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check index.js && node --test"
+  },
+  "engines": { "node": ">=20" }
+}
