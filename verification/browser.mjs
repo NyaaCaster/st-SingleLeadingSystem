@@ -32,7 +32,8 @@ const server = createServer(async (req, res) => {
     const send = (text, type = 'text/javascript') => { res.writeHead(200, { 'Content-Type': `${type}; charset=utf-8` }); res.end(text); };
     try {
         if (url.pathname === '/') return send(html, 'text/html');
-        if (url.pathname === '/lib.js') return send("import yaml from '/node_modules/yaml/browser/index.js'; import '/node_modules/js-sha256/src/sha256.js'; export {yaml}; export const sha256=globalThis.sha256;");
+        // SillyTavern 1.15.0 exports YAML but no SHA-256. Keep the entire UI/request suite on that boundary.
+        if (url.pathname === '/lib.js') return send("import yaml from '/node_modules/yaml/browser/index.js'; export {yaml};");
         if (url.pathname === '/scripts/openai.js') return send("export const oai_settings={chat_completion_source:'custom',custom_url:'http://person:private-secret@localhost:11434/v1?secret=token',custom_model:'Qwen3.6-35B:Q4-K-M',custom_prompt_post_processing:'merge'};export const getChatCompletionModel=()=>oai_settings.custom_model;window.mockOai=oai_settings;");
         if (url.pathname === '/scripts/extensions.js') return send("export const extensionTypes={'third-party/renamed-extension':'local'};window.mockExtensionTypes=extensionTypes;");
         if (url.pathname === '/api/extensions/version') {
@@ -78,10 +79,14 @@ try {
     await page.goto(address); await page.waitForFunction(() => window.hookListeners?.get('CHAT_COMPLETION_SETTINGS_READY')?.length === 1);
     await page.locator('.inline-drawer-header').click(); await page.waitForFunction(() => document.querySelector('[data-sls="update-status"]').textContent.includes('有可用更新'));
     assert.equal(await page.locator('#sls-enabled').isChecked(), false);
-    assert.equal(await page.locator('.sls-warning strong').count(), 2);
+    assert.equal(await page.locator('.sls-warning strong').count(), 3);
+    assert.equal(await page.locator('aside.sls-warning p').first().innerText(), '本插件不是破甲插件，是给自部署的 Qwen3.6 / Qwen3.5 模型做酒馆提示词结构兼容。');
+    assert.ok(await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('aside.sls-warning')).fontSize)
+        < parseFloat(getComputedStyle(document.querySelector('#sls-settings')).fontSize)));
+    assert.equal(await page.evaluate(async () => typeof (await import('/lib.js')).sha256), 'undefined');
     const initialText = await page.locator('#sls-settings').innerText();
     assert.ok(!/private-secret|secret=|person:/.test(initialText));
-    results.push('真实入口在重命名安装目录正常加载；默认停用、双警告、敏感地址不展示');
+    results.push('宿主无 SHA-256 时真实入口正常加载；默认停用、三条提示顺序和缩小字号、敏感地址不展示');
 
     await find('add').click(); assert.equal(await page.locator('#sls-enabled').isChecked(), false);
     await find('add').click(); assert.equal(await page.locator('.sls-rule').count(), 1);

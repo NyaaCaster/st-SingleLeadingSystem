@@ -4,6 +4,7 @@ import { processRequest } from './src/request.js';
 import { createUpdateChecker } from './src/update.js';
 import { createUI, reasonText } from './src/ui.js';
 import { diagnostic } from './src/errors.js';
+import { sha256 } from './src/sha256.js';
 
 const folder = new URL('.', import.meta.url);
 const extensionId = decodeURIComponent(folder.pathname.split('/scripts/extensions/')[1]?.replace(/\/$/, '') || '');
@@ -28,7 +29,7 @@ async function initialize() {
     } catch { unavailable = true; }
     if (!ctx?.extensionSettings || typeof ctx?.saveSettingsDebounced !== 'function'
         || !ctx?.eventTypes?.CHAT_COMPLETION_SETTINGS_READY || typeof ctx?.eventSource?.on !== 'function'
-        || typeof libs?.sha256 !== 'function' || typeof libs?.yaml?.parse !== 'function'
+        || typeof libs?.yaml?.parse !== 'function'
         || typeof openai?.getChatCompletionModel !== 'function' || !openai?.oai_settings) unavailable = true;
 
     function reload() {
@@ -45,7 +46,7 @@ async function initialize() {
         try {
             return { identity: requestIdentity({ chat_completion_source: openai.oai_settings.chat_completion_source,
                 model: openai.getChatCompletionModel(), custom_url: openai.oai_settings.custom_url,
-                reverse_proxy: openai.oai_settings.reverse_proxy }, libs.sha256) };
+                reverse_proxy: openai.oai_settings.reverse_proxy }, sha256) };
         } catch (error) { return { error: diagnostic(error).code }; }
     }
     function render() {
@@ -115,7 +116,7 @@ async function initialize() {
         // Read the latest configuration, including edits made through settings import/profile changes.
         reload();
         const result = settingsError ? { status: 'skipped', code: settingsError } : processRequest(request, settings, {
-            sha256: libs.sha256, parseYaml: libs.yaml.parse,
+            sha256, parseYaml: libs.yaml.parse,
         });
         ui.result(result);
         if (result.status === 'skipped') {

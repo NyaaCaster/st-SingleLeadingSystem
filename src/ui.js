@@ -4,7 +4,7 @@ const reasons = {
     source: '此接口入口不在首版支持范围。请使用聊天补全的自定义 OpenAI 兼容、OpenAI 或 OpenRouter。',
     main_api: '请切换到聊天补全。Ollama 请使用自定义 OpenAI 兼容 /v1 接入。',
     model: '尚未选择有效模型。', endpoint: '服务地址无效或不是 HTTP/HTTPS 地址。',
-    hash_unavailable: '宿主未提供可用的地址指纹能力。',
+    hash_unavailable: '地址指纹计算失败。',
     settings_schema: '配置版本无法读取，插件已停用且保留原配置。请检查插件版本。',
     settings_rules: '规则配置损坏，插件已停用且保留原配置。',
     messages_shape: '消息数组为空或格式无效。', message_role: '消息包含不支持的角色。',

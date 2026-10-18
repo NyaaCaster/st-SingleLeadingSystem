@@ -8,6 +8,7 @@
             <p class="sls-help">用于要求系统消息位于对话开头的聊天模板。设计参考已核验的 <b>Qwen3.6-35B-A3B / Qwen3.5-35B-A3B</b> 官方模板约束；本酒馆扩展的实际效果以你的测试为准。</p>
             <aside class="sls-warning" aria-labelledby="sls-warning-title">
                 <b id="sls-warning-title"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 使用前请注意</b>
+                <p><strong>本插件不是破甲插件，是给自部署的 Qwen3.6 / Qwen3.5 模型做酒馆提示词结构兼容。</strong></p>
                 <p>本插件会在对话中禁用 API 设置中的「提示词后处理」功能，如果与其他预设冲突，<strong>请不要使用本插件</strong>。</p>
                 <p>本插件不会接管其他插件的提示词注入，如果与其他插件、JS 脚本冲突，<strong>请不要使用本插件</strong>。</p>
                 <p class="sls-scope">仅对命中规则且成功转换的本次对话请求关闭后处理，不修改已保存的 API 设置。中途系统指令转为用户消息后，角色优先级会降低。</p>
